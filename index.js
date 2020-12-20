@@ -3,7 +3,6 @@ const path = require('path');
 const http = require('http');
 const checker = require('./checkerGame')
 const mongoose = require('mongoose');
-const Queue = require('./Queue.js');
 const User = require('./model/gameModel');
 const session = require('express-session');
 const passport = require('passport');
@@ -11,7 +10,7 @@ const Game = require('./model/gameModel.js');
 
 var MongoDBStore = require('connect-mongo')(session);
 
-const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/socket';
+const dbUrl = 'mongodb://localhost:27017/checkers_gamee';
 
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
