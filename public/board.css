@@ -1,0 +1,100 @@
+body{
+    height: 100vh;
+}
+
+.background{
+    margin-top: 15px;
+    position:relative;
+    
+
+}
+.userUi{
+  background-color: rgba(228, 230, 231, 0.4);
+  height: 100%;
+  width: 360px;
+  margin:auto;
+  z-index:100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+}
+.text{
+  margin: 0;
+
+}
+.btn{
+  margin: 0;
+  padding: 5px;
+  width: 100px;
+
+}
+
+.img {
+    
+    z-index:9;
+    height:360px;
+    width: 360px;
+    background: url("./borad.jpg") no-repeat center;
+    background-size: 100% 100%;
+    
+    
+}
+tr{
+    width:376px;
+    height: 45px;
+    border: 0px;
+}
+table{
+    width:100%;
+}
+td{
+    height:45px;
+    width:45px;
+    padding:0px;
+    margin:0px;
+}
+.center {
+  margin: auto;
+  text-align: center;
+}
+
+.red {
+  height: 30px;
+  width: 30px;
+  margin: auto;
+  background-color: red;
+  border-radius: 50%;
+  
+}
+.black {
+  height: 30px;
+  width: 30px;
+  margin: auto;
+  background-color: black;
+  border-radius: 50%;
+}
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
