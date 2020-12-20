@@ -10,7 +10,7 @@ const Game = require('./model/gameModel.js');
 
 var MongoDBStore = require('connect-mongo')(session);
 
-const dbUrl = 'mongodb://localhost:27017/checkers_gamee';
+const dbUrl = 'mongodb+srv://dor:mesi91lati@cluster0.rsh71.mongodb.net/checkerGame?retryWrites=true&w=majority';
 
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
