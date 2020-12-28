@@ -70,34 +70,6 @@ app.use(session(sessionConfig));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
-const defaultBoard = {
-    A1: "", A2: "", A3: "", A4: "", A5: "", A6: "", A7: "", A8: "",
-    B1: "", B2: "", B3: "", B4: "", B5: "", B6: "", B7: "", B8: "",  
-    C1: "", C2: "", C3: "", C4: "", C5: "", C6: "", C7: "", C8: "", 
-    D1: "", D2: "", D3: "", D4: "", D5: "", D6: "", D7: "", D8: "", 
-    E1: "", E2: "", E3: "", E4: "", E5: "", E6: "", E7: "", E8: "", 
-    F1: "", F2: "", F3: "", F4: "", F5: "", F6: "", F7: "", F8: "", 
-    G1: "", G2: "", G3: "", G4: "", G5: "", G6: "", G7: "", G8: "",
-    H1: "", H2: "", H3: "", H4: "", H5: "", H6: "", H7: "", H8: "",  
-}
-const redPieceSpot = ["A2", "A4", "A6", "A8",
-						"B1","B3","B5","B7",
-						"C2", "C4", "C6", "C8"]
-const blackPieceSpot = ["F1", "F3", "F5", "F7",
-                    "G2", "G4", "G6", "G8",
-                    "H1", "H3", "H5", "H7", ];
-
-                    class Piece{
-                        constructor(color){
-                            this.color = color;
-                            this.king = false;
-                        }
-                    }
-
-
-
-
 io.on('connection', (socket) => {
 
     console.log('new connection from socket id - ', socket.id);

@@ -1,24 +1,37 @@
 
 "use strict"
+var app = {
 
-const socket = io();
+    gameId: "",
+    myRole: "",
+    mySocketId: "",
+    currectRound: 0,
+
+    init: function(){
+
+    }
+}
+var IO = {
+
+    init: function(){
+        IO.socket = io.connect();
+    }
+}
+// const socket = io();
+IO.init();
 var gameBoard = {};
 var gameID;
+
  
 const ui = document.querySelector('.userUi');
-ui.className - 'center';
-const startBtn = document.createElement('BUTTON');
-startBtn.className = "btn btn-primary";
-startBtn.id = 'start';
-startBtn.innerHTML = 'start game';
-ui.appendChild(startBtn);
+const startBtn = document.querySelector('#startBtn');
 startBtn.addEventListener('click', () => {
-    socket.emit('playerSearchGame');
+    IO.socket.emit('playerSearchGame');
     console.log('sreaching for game');
 
 });
 
-socket.on('waitForOpponent',(id) => {
+IO.socket.on('waitForOpponent',(id) => {
     gameID = id;
     const text = document.createElement('H3');
     text.innerHTML = 'Wait for opponent';
@@ -30,10 +43,10 @@ socket.on('waitForOpponent',(id) => {
     const btn = document.querySelector('#start');
     btn.remove();
 });
-socket.on('findOpponent', () =>{
-    socket.emit('startGame', gameID);
+IO.socket.on('findOpponent', () =>{
+    io.socket.emit('startGame', gameID);
 })
-socket.on('renderBoard', (board) =>{
+IO.socket.on('renderBoard', (board) =>{
     gameBoard = board;
     ui.style.display = "none";
     renderBoard(gameBoard);	
@@ -72,7 +85,7 @@ function playerReleasePiece(event) {
     console.log('valid ', valid);
     if(valid){
         console.log('game id ' ,gameID);
-        socket.emit('movePiece',currentPiece.oldSquare,
+        IO.socket.emit('movePiece',currentPiece.oldSquare,
                     currentPiece.newSquare, gameBoard);
     }else{
         alert('illigal move')
@@ -91,6 +104,44 @@ function validateMove(oldS, newS ,turn){
     let newX = newS[1];
     let newY = newS[0];
 
+    // switch(playerTurn){
+    //     case 'red':
+    //         switch(newX){
+    //             case oldX+1:
+
+    //         }
+
+    //         break;
+    //     case 'black':
+
+    //         break;
+    // }
+
+    switch(newX){
+        case oldX+1:
+            if(turn === "red"){
+                if(tran[oldY] + 1 === tran[newY]){
+                    valid = true;
+                }
+            }else{
+                if(tran[oldY] - 1 === tran[newY]){
+                    valid = true;
+                }
+            }
+            break;
+        case oldX+2:
+            // code block
+            break;
+        case oldX+4:
+            // code block
+            break;
+            default:
+                if(gameBoard[newS] !== ""){
+                    console.log('invalid move ', newS);
+                    valid = false;
+                }
+
+    }
     if(gameBoard[newS] !== ""){
         console.log('invalid move ', newS);
         valid = false;
