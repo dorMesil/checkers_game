@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config();
+}
+
 const express = require('express');
 const path = require('path');
 const http = require('http');
@@ -10,7 +14,7 @@ const Game = require('./model/gameModel.js');
 
 var MongoDBStore = require('connect-mongo')(session);
 
-const dbUrl = 'mongodb+srv://dor:mesi91lati@cluster0.rsh71.mongodb.net/checkerGame?retryWrites=true&w=majority';
+const dbUrl = process.env.DB_URL ||'mongodb://localhost:27017/checkers_game';
 
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
@@ -62,7 +66,6 @@ const sessionConfig = {
 }
 
 
-
 sharedsession = require("express-socket.io-session");
 io.use(sharedsession(session(sessionConfig)));
 app.use(session(sessionConfig));
@@ -71,9 +74,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 io.on('connection', (socket) => {
-
     console.log('new connection from socket id - ', socket.id);
-    
+
     socket.on('playerSearchGame',searchGame);
     socket.on('startGame', start);
     socket.on('disconnect', (reason) =>{
@@ -83,7 +85,6 @@ io.on('connection', (socket) => {
 
 function start(id){
     checker.initGame(io, this, id );
-
 }
 
 async function playerDisconnect(socket, reason){
@@ -119,8 +120,6 @@ async function searchGame (){
     this.join(game.id);
     this.emit('waitForOpponent', game.id);
     if(game.numOfPlayers ===2){
-        // var gameBoard = {};
-        // gameBoard = await fixBoard(defaultBoard); 
         console.log('start game');
         io.to(game.id).emit('findOpponent')
     }else{
@@ -128,7 +127,6 @@ async function searchGame (){
     }
     
 }
-
 async function findMatch(socket){
     var game;
     var emptyGame = await Game.findOne({$or: [{ joinPlayer: null }, {hostPlayer: null}] }).exec();

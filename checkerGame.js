@@ -48,7 +48,7 @@ function movePiece(oldSquare, newSquare, board){
         gameBoard[oldSquare] = "";
     }
     // console.log(gameBoard);
-    console.log(gameID);
+    // console.log(gameID);
     io.to(gameID).emit('renderBoard', gameBoard)
 }
 
