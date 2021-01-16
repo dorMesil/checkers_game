@@ -13,20 +13,23 @@ const defaultBoard = {
     G1: "", G2: "", G3: "", G4: "", G5: "", G6: "", G7: "", G8: "",
     H1: "", H2: "", H3: "", H4: "", H5: "", H6: "", H7: "", H8: "",  
 }
-const redPieceSpot = ["A2", "A4", "A6", "A8",
-						"B1","B3","B5","B7",
-						"C2", "C4", "C6", "C8"]
-const blackPieceSpot = ["F1", "F3", "F5", "F7",
-                    "G2", "G4", "G6", "G8",
-                    "H1", "H3", "H5", "H7", ];
+// const gameBoard = [[ null, null, null, null, null, null, null, null], 
+//                    [ null, null, null, null, null, null, null, null], 
+//                    [ null, null, null, null, null, null, null, null], 
+//                    [ null, null, null, null, null, null, null, null], 
+//                    [ null, null, null, null, null, null, null, null], 
+//                    [ null, null, null, null, null, null, null, null], 
+//                    [ null, null, null, null, null, null, null, null], 
+//                    [ null, null, null, null, null, null, null, null]
+//                   ]
+// const redPieceSpot = ["A2", "A4", "A6", "A8",
+// 						"B1","B3","B5","B7",
+// 						"C2", "C4", "C6", "C8"]
+// const blackPieceSpot = ["F1", "F3", "F5", "F7",
+//                     "G2", "G4", "G6", "G8",
+//                     "H1", "H3", "H5", "H7", ];
 
-                    
-class Piece{
-    constructor(color){
-        this.color = color;
-        this.king = false;
-    }
-}
+
 
 exports.initGame = function(sio, socket, id){
     io = sio;
@@ -52,14 +55,14 @@ function movePiece(oldSquare, newSquare, board){
     io.to(gameID).emit('renderBoard', gameBoard)
 }
 
-function fixBoard(startBoard){
-    console.log('in fix board');
-    for (const spot of redPieceSpot) {
-        startBoard[spot] = new Piece('red');
-    }
-    for (const spot of blackPieceSpot) {
-        startBoard[spot] = new Piece('black');
-    }
-    return JSON.parse(JSON.stringify(startBoard));
+// function fixBoard(startBoard){
+//     console.log('in fix board');
+//     for (const spot of redPieceSpot) {
+//         startBoard[spot] = new Piece('red');
+//     }
+//     for (const spot of blackPieceSpot) {
+//         startBoard[spot] = new Piece('black');
+//     }
+//     return JSON.parse(JSON.stringify(startBoard));
    
-}
+// }

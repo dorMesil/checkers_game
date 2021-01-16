@@ -77,15 +77,16 @@ io.on('connection', (socket) => {
     console.log('new connection from socket id - ', socket.id);
 
     socket.on('playerSearchGame',searchGame);
-    socket.on('startGame', start);
+    socket.on('playerMove', (data) =>{
+        var room = 'room '+data.id;
+        console.log(data);
+        io.to(room).emit('nextTurn', {board:data.board})
+
+    });
     socket.on('disconnect', (reason) =>{
         playerDisconnect(socket, reason);
     });
 });
-
-function start(id){
-    checker.initGame(io, this, id );
-}
 
 async function playerDisconnect(socket, reason){
     var game;
@@ -117,11 +118,13 @@ async function searchGame (){
     console.log('player search game\n');
     var game = await findMatch(this);
     console.log('player joined game -\n ', game)
-    this.join(game.id);
-    this.emit('waitForOpponent', game.id);
-    if(game.numOfPlayers ===2){
+    this.join('room ' + game.id);
+    console.log('clinet on room',this.rooms);
+    var role = game.numOfPlayers === 1? 'red' : 'black';
+    this.emit('waitForOpponent', { playerRule : role});
+    if(game.numOfPlayers === 2){
         console.log('start game');
-        io.to(game.id).emit('findOpponent')
+        io.to('room ' + game.id).emit('findOpponent', {gameID : game.id})
     }else{
         console.log('waiting for Opponent');
     }
@@ -157,7 +160,7 @@ async function findMatch(socket){
     
 }
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 3000;
 server.listen(port, () => {
     console.log(`Serving on port ${port}`)
 })
