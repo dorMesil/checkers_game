@@ -10,9 +10,7 @@ const session = require('express-session');
 const Game = require('./model/gameModel.js');
 
 var MongoDBStore = require('connect-mongo')(session);
-// "mongodb+srv://<dor>:<2of10I7Ny0DB8tFg>@cluster0.rsh71.mongodb.net/<checkers_game>?retryWrites=true&w=majority"
-const dbUrl = "mongodb+srv://dor:2of10I7Ny0DB8tFg@cluster0.rsh71.mongodb.net/checkers_game?retryWrites=true&w=majority"
-// 'mongodb://localhost:27017/checkers_game'; process.env.DB_URL || 
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/checkers_game';
 
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
