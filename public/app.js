@@ -219,7 +219,6 @@ var app = {
         this.ui = document.querySelector('.userUi');
         this.startBtn = document.querySelector('#startBtn');
         this.tds = document.querySelectorAll('TD');
-    
     },
 	playerSearchGame : function(){
 		IO.socket.emit('playerSearchGame');
