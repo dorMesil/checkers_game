@@ -64,24 +64,32 @@ td{
 }
 
 .red {
-  height: 30px;
-  width: 30px;
+  height: 100%;
+  width: 100%;
   margin: auto;
-  background-color: red;
-  border-radius: 50%;
+  background: url("./red.png") no-repeat center ;
+  background-size: cover;
 }
 .red:active{
   background-color: rgba(171, 3, 9, 0.7);
 }
 .black {
-  height: 30px;
-  width: 30px;
+  height: 100%;
+  width: 100%;
   margin: auto;
-  background-color: rgb(153, 102, 51);
-  border-radius: 50%;
+  background: url("./black.png") no-repeat center ;
+  background-size: cover;
 }
 .black:active{
   background-color: rgba(153, 102, 51, 0.7);
+}
+.red.king{
+  background: url("./king_red.png") no-repeat center ;
+  background-size: cover;
+}
+.black.king{
+  background: url("./black_king.png") no-repeat center ;
+  background-size: cover;
 }
 .loader {
   border: 16px solid #f3f3f3;

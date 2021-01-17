@@ -79,7 +79,7 @@ io.on('connection', (socket) => {
     socket.on('playerSearchGame',searchGame);
     socket.on('playerMove', (data) =>{
         var room = 'room '+data.id;
-        console.log(data);
+        // console.log(data.board.board)
         io.to(room).emit('nextTurn', {board:data.board})
 
     });
