@@ -213,7 +213,6 @@ var app = {
     },
     bindEvents : function() {
 		this.startBtn.addEventListener('click', this.playerSearchGame) ;
-
     },
     getDomElement : function(){
         this.ui = document.querySelector('.userUi');
