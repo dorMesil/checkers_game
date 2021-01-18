@@ -32,12 +32,11 @@ app.use(express.urlencoded({ extended: true }));
 
 
 const store = new MongoDBStore({
-    // url: dbUrl,
     mongooseConnection: db,
     name: 'sessions',
     secret: 'mysecret',
     // touchAfter: 24 * 60 *60,
-    ttl: 60 * 60
+    // ttl: 60 * 60 * 60
   });
 
 store.on('error', function(error) {
@@ -57,7 +56,7 @@ const sessionConfig = {
     cookie: {
         httpOnly: true,
         // secure: true,
-        maxAge:  1000 * 60 * 60 
+        maxAge:  1000 * 60 
     }
 }
 
