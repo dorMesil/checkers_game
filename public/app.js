@@ -56,76 +56,69 @@ class Board{
            
         
     }
-    check_diagonal_dist(currectTile, newTile){
+    getJumpArray(piece, newTile){
         // console.log('check diagonal \n', this);
-        
-        var diagonalTiles = [];
+        var currectTile = tileToInt(piece.tile);
+        var newTile = tileToInt(newTile);
+        var move ={ direction: "", tilesArray: []}
+        var diagonal = false
         if((currectTile - newTile)%11 === 0 && (currectTile - newTile) < 0){
+            
             for(var i = currectTile+11 ; i<88;  i+=11){
-                diagonalTiles.push(intToPieceIndex(i))
+                move.tilesArray.push(intToPieceIndex(i))
                 if(i === newTile){
-                    diagonalTiles.pop();
-                    var distance = (newTile-currectTile)/11
-                    var Direction = 1;
-                    return {distance :distance, direction: Direction, tilesArray: diagonalTiles};
+                    diagonal = true;
+                    move.tilesArray.pop();
+                    break;
                 }
             }
         }
         if((currectTile - newTile)%11 === 0 && (currectTile - newTile) > 0){
-            var diagonalTiles = [];
+            // var move.tilesArray = [];
             for(var i = currectTile-11 ; i>11;  i-=11){
-                diagonalTiles.push(intToPieceIndex(i))
+                move.tilesArray.push(intToPieceIndex(i))
                 if(i === newTile){
-                    diagonalTiles.pop();
-                    var distance = (newTile-currectTile)/11
-                    var Direction = -1;
-                    return {distance :distance, direction: Direction, tilesArray: diagonalTiles};
+                    diagonal = true;
+                    move.tilesArray.pop();
+                    break;
                 }
             }
         }
         if((currectTile - newTile)%9 === 0 && (currectTile - newTile) < 0){
-            var diagonalTiles = [];
+            // var diagonalTiles = [];
             for(var i = currectTile+9 ; i<88;  i+=9){
-                diagonalTiles.push(intToPieceIndex(i))
+                move.tilesArray.push(intToPieceIndex(i))
                 if(i === newTile){
-                    diagonalTiles.pop();
-                    var distance = (newTile-currectTile)/9
-                    var Direction = -1;
-                    return {distance :distance, direction: Direction, tilesArray: diagonalTiles};
+                    diagonal = true;
+                    move.tilesArray.pop();
+                    break;
                 }
             }
         }
         if((currectTile - newTile)%9 === 0 && (currectTile - newTile) > 0){
-            var diagonalTiles = [];
+            // var diagonalTiles = [];
             for(var i = currectTile-9;  i>11;  i-=9){
                 
-                diagonalTiles.push(intToPieceIndex(i))
+                move.tilesArray.push(intToPieceIndex(i))
                 if(i === newTile){
-                    diagonalTiles.pop();
-                    var distance = (newTile-currectTile)/9
-                    var Direction = 1;
-                    return {distance :distance, direction: Direction, tilesArray: diagonalTiles};
+                    diagonal = true;
+                    move.tilesArray.pop();
+                    break;
                 }
             }
         }
-        return false;
-    }
-    
-    pieceOnLastLine(piece){
-        if(piece.color === 'red' ){
-            if(piece.tile[0] === 'H'){
-                piece.king = true;
-                return true
-            }
+        if((newTile-currectTile) > 0){
+            move.direction = piece.color === 'red'? 'forward' : 'backward';
         }else{
-            if(piece.tile[0] === 'A'){
-                piece.king = true;
-                return true
-            }
+            move.direction = piece.color === 'red'? 'backward' :'forward';
         }
-        return false;
+        if(diagonal){
+            return move;
+        }else{
+            return false;
+        }
     }
-    findPieceInPieceArray(tile){
+    getPieceAndIndex(tile){
         var index = 0;
 
         for(var piece of this.redPieces){
@@ -148,9 +141,15 @@ class Board{
         return false;
 
     }
-    pieceCanJump(piece, move){
+    pieceCanJump(piece, newTile){
+
+        var jump = this.getJumpArray(piece, newTile);
+        if(!jump){
+            return;
+        }
+        console.log('jump object ',jump);
         var countOpponentPieces = 0;
-        for(var tile of move.tilesArray){
+        for(var tile of jump.tilesArray){
             if(this.board[tile] !== ""){
                 if((this.board[tile]).color === piece.color){
                     return false;
@@ -158,34 +157,47 @@ class Board{
                 if((this.board[tile]).color !== piece.color){
                     countOpponentPieces++;
                 }
-                if(countOpponentPieces >= 2){
-                    return false;
-                }
-
             }
-            
+        }
+        if(countOpponentPieces >= 2 ){
+            return false;
         }
         
-        return true;
+        if(piece.king){
+            return true;
+        }
+
+        if(jump.direction === 'forward' && jump.tilesArray.length === 0 ){
+            return true;
+        }
+        if(jump.direction === 'forward' && jump.tilesArray.length === 1 && countOpponentPieces === 1 ){
+            return true;
+        }
+        
+        
+        return false;
     }
-    
     movePeice(piece, newTile){
         
         this.board[piece.tile] = "";
         this.board[newTile] = piece;
-        var movingPiece = this.findPieceInPieceArray(piece.tile);
+        var movingPiece = this.getPieceAndIndex(piece.tile);
         // console.log(this)
+        this.removeOppenentPiece(piece, newTile);
         movingPiece.piece.tile = newTile;
+        this.isKing(movingPiece.piece);
         // console.log('moving piece ', movingPiece)
 
     }
-    removeOppenentPIece(tilesArray){
-        for(var tile of tilesArray){
+    removeOppenentPiece(piece, newTile){
+
+        var jump = this.getJumpArray(piece, newTile)
+        for(var tile of jump.tilesArray){
             this.board[tile] = "";
-            if(this.findPieceInPieceArray(tile)){
+            if(this.getPieceAndIndex(tile)){
                 
-                var piece = this.findPieceInPieceArray(tile);
-                console.log('piece -- ' , piece)
+                var piece = this.getPieceAndIndex(tile);
+                console.log('remove piece -- ' , piece)
                 if(piece.piece.color ==='red'){
                     this.redPieces.splice(piece.index,1);
                 }else{
@@ -195,15 +207,22 @@ class Board{
             }
         }
     }
+    isKing(piece){
+        if(piece.color === 'red' && piece.tile[0] === 'H'){
+            piece.king = true;
+        }
+        if(piece.color === 'black' && piece.tile[0] === 'A'){
+            piece.king = true;
+        }
+
+    }
 }   
 var app = {
 
 	gameBoard : null,
     gameID: "",
     myRule: "",
-    mySocketId: "",
     turn : 'red',
-    currectRound: 0,
     selectedPiece: null,
 
     init: function(){
@@ -212,132 +231,36 @@ var app = {
 
     },
     bindEvents : function() {
-		this.startBtn.addEventListener('click', this.playerSearchGame) ;
+		this.startBtn.addEventListener('click', this.startGameButtonEvent) ;
     },
     getDomElement : function(){
-        this.ui = document.querySelector('.userUi');
+        this.ui = document.querySelector('.warper');
         this.startBtn = document.querySelector('#startBtn');
         this.tds = document.querySelectorAll('TD');
+        this.text = document.querySelector('.text');
+        this.loader = document.querySelector('.loader');
+        this.redScore = document.querySelector('.redScore');
+        this.gameMassage = document.querySelector('.game-massage');
+        this.blackScore = document.querySelector('.blackScore');
+        this.turnflag = document.querySelector('.turnflag');
+        this.turnSigh = document.querySelector('.user-turn-sign');
     },
-	playerSearchGame : function(){
-		IO.socket.emit('playerSearchGame');
+    waitForOpponentDiaplay : function(){
+        app.text.innerHTML = 'Wait for opponent';
+        app.ui.appendChild(app.text);
+        app.loader.style.display = 'block';
+        app.text.style.display = 'block';
+        app.startBtn.remove();
+
+    },
+	startGameButtonEvent : function(){
+        app.waitForOpponentDiaplay();
+		IO.socket.emit('playerSearchGame',(res) =>{
+            app.myRule = res.role;
+        });
 		console.log('sreaching for game');
     },
-    playerMove: function(newTilePosition){
-        // console.log('player logics',this);
-        
-        var move = this.gameBoard.check_diagonal_dist(tileToInt(this.selectedPiece.tile), tileToInt(newTilePosition));
-        // console.log('move ------- ', move,'\n',this);
-        if(move){
-            switch (app.turn) {
-                case "red":
-                    if(move.distance < 0 && this.selectedPiece.king ){
-                        console.log('player move red king piece!')
-                        if(Math.abs(move.distance) === 1){
-                            app.gameBoard.movePeice(app.selectedPiece, newTilePosition);
-                            IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                        }else if (Math.abs(move.distance) === 2 && this.gameBoard.pieceCanJump(this.selectedPiece, move)){
-                            
-                            this.gameBoard.movePeice(app.selectedPiece, newTilePosition)
-                            this.gameBoard.removeOppenentPIece( move.tilesArray)
-                            
-                            console.log('piece move!!! ');
-                            IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                        }else if (Math.abs(move.distance) > 2 && this.gameBoard.pieceCanJump(this.selectedPiece, move) && this.selectedPiece.king){
-
-                        
-                        this.gameBoard.movePeice(app.selectedPiece, newTilePosition)
-                        
-                        this.gameBoard.removeOppenentPIece(move.tilesArray)
-                        
-                        IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                        }
-
-                    }else if(move.distance === 1){
-                        app.gameBoard.movePeice(app.selectedPiece, newTilePosition);
-                        this.pieceOnLastLine(this.selectedPiece);
-                        IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                    }else if (move.distance === 2 && this.gameBoard.pieceCanJump(this.selectedPiece, move)){
-                        
-                        
-                        this.gameBoard.movePeice(app.selectedPiece, newTilePosition);
-                        this.pieceOnLastLine(this.selectedPiece);
-                        
-                        this.gameBoard.removeOppenentPIece(move.tilesArray);
-                        
-                        console.log('piece move!!! ');
-                        IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                    }else if (move.distance > 2 && this.gameBoard.pieceCanJump(this.selectedPiece, move) && this.selectedPiece.king){
-
-                        console.log('king piece move')
-                        this.gameBoard.movePeice(app.selectedPiece, newTilePosition);
-                        this.pieceOnLastLine(this.selectedPiece);
-                        
-                        this.gameBoard.removeOppenentPIece( move.tilesArray);
-                        
-                        IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                    }
-                    break;
-                case "black":
-                    if(move.distance > 0 && this.selectedPiece.king ){
-                        console.log('player move black king piece!')
-                        if(move.distance === 1){
-                            app.gameBoard.movePeice(app.selectedPiece, newTilePosition);
-                            this.pieceOnLastLine(this.selectedPiece);
-                            IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                        }else if (move.distance === 2 && this.gameBoard.pieceCanJump(this.selectedPiece, move)){
-                            
-                            this.gameBoard.movePeice(app.selectedPiece, newTilePosition);
-                            this.pieceOnLastLine(this.selectedPiece);
-                            
-                            this.gameBoard.removeOppenentPIece( move.tilesArray);
-                            
-                            console.log('piece move!!! ');
-                            IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                        }else if (move.distance > 2 && this.gameBoard.pieceCanJump(this.selectedPiece, move) && this.selectedPiece.king){
-
-                            console.log('king piece move')
-                            this.gameBoard.movePeice(app.selectedPiece, newTilePosition);
-                            this.pieceOnLastLine(this.selectedPiece);
-                            
-                            this.gameBoard.removeOppenentPIece( move.tilesArray);
-                            
-                            IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                        }
-
-                    }else if(move.distance === -1){
-                        
-                        this.gameBoard.movePeice(app.selectedPiece, newTilePosition);
-                        this.pieceOnLastLine(this.selectedPiece);
-                        // console.log(app.gameBoard);
-                        IO.socket.emit('playerMove', {board : app.gameBoard, id: app.gameID});
-
-
-                    }else if (move.distance === -2 && this.gameBoard.pieceCanJump(app.selectedPiece, move)){
-                        this.gameBoard.movePeice(app.selectedPiece, newTilePosition)
-                        this.pieceOnLastLine(this.selectedPiece);
-                        
-                        this.gameBoard.removeOppenentPIece( move.tilesArray)
-                        console.log('piece move!!! ');
-                        IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                    }else if (move.distance < -2 && this.gameBoard.pieceCanJump(this.selectedPiece, move) && this.selectedPiece.king){
-
-                        console.log('king piece move')
-                        this.gameBoard.movePeice(app.selectedPiece, newTilePosition)
-                        this.pieceOnLastLine(this.selectedPiece);
-
-                        
-                        this.gameBoard.removeOppenentPIece( move.tilesArray)
-                        
-                        IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
-                    }
-                    break;
-            }
-        }else{
-        console.log('not diagonal');
-        }
-    },
-	playerReleasePiece : function(event) {
+	playerReleasePieceEvent : function(event) {
 		event.preventDefault();
         var newTilePosition = event.currentTarget.id;
         // console.log('player release');
@@ -354,28 +277,55 @@ var app = {
 		}
 			
     },
-    pieceOnLastLine(piece){
-        if(this.gameBoard.pieceOnLastLine(piece)){
-            this.getTileElement(piece.tile).className += 'king';
-        }
-    },
-
-	playerSelectPiece : function(event){
+    playerSelectPieceEvent : function(event){
 		event.preventDefault();
-		// console.log(event.currentTarget.parentElement.id);        
+		console.log(event.currentTarget.parentElement.id);        
         var tile = event.currentTarget.parentElement.id 
-        app.selectedPiece = app.gameBoard.findPieceInPieceArray(tile).piece;
+        app.selectedPiece = app.gameBoard.getPieceAndIndex(tile).piece;
         // console.log(app.selectedPiece);
         
 		for (var td of app.tds) {
             if(td.innerHTML === ""){
-                td.addEventListener("mouseup", app.playerReleasePiece);
+                td.addEventListener("mouseup", app.playerReleasePieceEvent);
             }
 		}
 	
     },
+    getTileElement : function(tile){
+        for(var td of app.tds){
+            if(td.id === tile){
+                return td;
+            }
+        }
+    },
+    playerMove: function(newTilePosition){
+        // console.log('player logics',this);
+        if(this.gameBoard.pieceCanJump(this.selectedPiece, newTilePosition)){
+
+            this.gameBoard.movePeice(app.selectedPiece, newTilePosition)
+            console.log('piece move!!! ');
+            IO.socket.emit('playerMove', {board : this.gameBoard, id: this.gameID});
+        }else{
+        alert('iligal move');
+        }
+    },
     toggleTurn : function(){
-        this.turn = this.turn === 'red' ? 'black' : 'red';
+        this.turn = this.turn === 'red'? 'black' :'red';
+        if(this.turn ===  this.myRule){
+            this.turnSigh.innerHTML = 'your turn, please play';
+            this.turnflag.style.backgroundColor  = this.myRule;
+        }else{
+            if(this.myRule === 'red'){
+                this.turnSigh.innerHTML = 'black turn, please wait';
+                this.turnflag.style.backgroundColor  = 'black';
+
+            }else{
+                this.turnSigh.innerHTML = 'red turn, please wait';
+                this.turnflag.style.backgroundColor  = 'red';
+            }
+        }
+        this.redScore.innerHTML = Math.abs(this.gameBoard.blackPieces.length -12);
+        this.blackScore.innerHTML =Math.abs(this.gameBoard.redPieces.length-12) ;
     },
     nextTurn : function(board){
         console.log('player next turn')
@@ -387,70 +337,51 @@ var app = {
         this.renderBoard();
 
     },
-    getTileElement : function(tile){
-        for(var td of app.tds){
-            if(td.id === tile){
-                return td;
-            }
-        }
-    },
     renderBoard : function(){
-        this.ui.style.display = "none";
+        // this.ui.style.display = "none";
         console.log('############### in render ####################');
        console.log(this)
         for (let tile in this.gameBoard.board) {
 
             var tileElement = this.getTileElement(tile);
-            // console.log('get element from Dom ' ,tileElement,' for tile -- ', tile)
-            if(this.gameBoard.board[tile].color === 'red' && tileElement.innerHTML === ""){
-                // console.log('render red element ', tileElement)
+            if(this.gameBoard.board[tile] !== tileElement.innerHTML){
                 
-                const td = document.querySelector('#'+tile);
-                const div = document.createElement('DIV');
-                div.className = this.gameBoard.board[tile].color;
-                if(this.gameBoard.board[tile].king){
-                    div.className += " king";
-                }
-                td.appendChild(div);  
-                div.addEventListener("mousedown", this.playerSelectPiece);
-
-            }
-            if(this.gameBoard.board[tile].color === 'black' && tileElement.innerHTML ===""){
                 
-                // console.log('render black element ', tileElement)     
-                const td = document.querySelector('#'+tile);
-                const div = document.createElement('DIV');
-                div.className = this.gameBoard.board[tile].color;
-                if(this.gameBoard.board[tile].king){
-                    div.className += " king";
+                if(this.gameBoard.board[tile] === ''){
+                    tileElement.innerHTML ='';
+                }else{
+                    
+                    tileElement.innerHTML ='';
+                    const div = document.createElement('DIV');
+                    div.classList.toggle(this.gameBoard.board[tile].color);
+                    if(this.gameBoard.board[tile].king){
+                        div.classList.toggle('king');
+                    }
+                    tileElement.appendChild(div);  
+                    div.addEventListener("mousedown", this.playerSelectPieceEvent);
+    
                 }
-                td.appendChild(div);  
-                div.addEventListener("mousedown", this.playerSelectPiece);
-
-            }
-            if(this.gameBoard.board[tile] === "" && tileElement.childElementCount > 0 ){
-                console.log('delete element', tileElement);
-                tileElement.innerHTML = "";
             }
         }
     },
     startGame : function(gameID){
+        this.loader.style.display='none';
+        this.text.style.display='none';
+        this.turnSigh.innerHTML = this.myRule ==='red'? 'your turn': 'red turn please wait';
+        this.turnflag.style.backgroundColor  = 'red';
         this.gameID = gameID
         this.gameBoard = new Board();
         this.gameBoard.initiateGame();
+        this.redScore.innerHTML = 0;
+        this.blackScore.innerHTML =0;
+        this.turn ='red';
+        this.gameMassage.innerHTML = '';
         // console.log('start new game', this);
         app.renderBoard();
     },
-    isWaitForOpponent : function(playerRule){
-        this.myRule = playerRule;
-        const text = document.createElement('H3');
-        text.innerHTML = 'Wait for opponent';
-        text.className = 'center text';
-        this.ui.appendChild(text);
-        const loader = document.createElement('DIV');
-        loader.className = 'loader center';
-        this.ui.appendChild(loader);
-        this.startBtn.remove();
+    oppoenentDisconnected : function(){
+        this.gameMassage.innerHTML = 'player left game '
+        this.waitForOpponentDiaplay()
     }
     
 }
@@ -462,21 +393,22 @@ var IO = {
     },
 
     bindEvents : function(){
-        IO.socket.on('waitForOpponent', this.waitForOpponent);
         IO.socket.on('findOpponent', this.findOpponent);
         IO.socket.on('nextTurn', this.nextTurn);
+        IO.socket.on('oppoenentDisconnected', this.oppoenentDisconnected);
 
     },
 
     findOpponent :function(data){
         app.startGame(data.gameID);
     },
-    waitForOpponent : function(data){
-        app.isWaitForOpponent(data.playerRule);
-    },
     nextTurn : function(data){
         app.nextTurn(data.board);
         
+    },
+    oppoenentDisconnected: function(){
+        console.log('player leave');
+        app.oppoenentDisconnected();
     }
 
     

@@ -2,50 +2,114 @@ body{
     height: 100vh;
 }
 
+*{
+  z-index: 2;
+}
 .background{
-    margin-top: 15px;
-    position:relative;
+  margin-top: 15px;
+  position:relative;
+  height: 360px;
+    
+  display: flex;
+  flex-direction: row;
+  flex-wrap:wrap;
+  align-items: flex-start; 
+  justify-content: center;
+  /* padding: 10px;  */
     
 
 }
-.userUi{
-  background-color: rgba(228, 230, 231, 0.4);
-  height: 100%;
-  width: 360px;
-  margin:auto;
-  z-index:100;
+
+.scoreBoard{ 
+  
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 5px;
+  position: relative;
+  height: 140px; 
+  width: 240px; 
+  margin: 10px;
   justify-content: center;
-  position:absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  background-color: #CFB891; 
+  border-top: 5px solid #A67732; 
+  border-left: 5px solid #A67732; 
+  border-right: 5px solid #A67732; 
+  border-bottom: 5px solid #A67732; 
+  border-radius: 10px;
+} 
+.score-board-title{
+  margin-top:0px;
+  position: absolute;
+}
+.blackScore{
+  text-align: center;
+  border: 2px solid rgb(255, 255, 255); 
+  border-radius: 10px;
+  background-color: rgb(0, 0, 0);
+  height:60px;
+  width: 50px;
+  margin:10px auto;
+  align-self:center;
+  color: rgb(255,255,255);
+  font-size: 2rem;
   
 }
-.text{
-  margin: 0;
+.redScore{
+  text-align: center;
+  border: 1px solid rgb(255, 255, 255);
+  background-color: rgb(153, 0, 0);
+  height:60px;
+  width: 50px;
+  margin:10px auto;
+  align-self:center; 
+  border-radius: 10px;
+  color: rgb(255,255,255);
+  font-size: 2rem;
+  
+}
+.warper{
+  /* background-color: rgba(228, 230, 231, 0.4); */
+  height: 360px;
+  width: 360px;
+  margin:0px; 
+  position:relative;
+  display: flex;
+   /* flex-direction: row; */
+  align-items: center;
+  
+} 
 
+.center {
+  /* display: flex; */
+  /* margin: auto; */
+  margin-top: 0px;
+  margin-bottom: 0px;
+  text-align: center;
 }
 .btn{
-  margin: 0;
+  /* position: relative; */
+  margin: auto;
   padding: 5px;
   width: 100px;
+  z-index: 2;
+  
 
 }
-
 .img {
-    
-    z-index:9;
-    height:360px;
-    width: 360px;
+   
+    z-index: 1;
+    height:auto;
+    max-width: 100%;
+    display:flex;
+    position: absolute;
+    top:0px;
+    left:0px;
+    flex-shrink: 3;
     background: url("./board.jpg") no-repeat center;
-    background-size: 100% 100%;
-    
-    
+    background-size: 100% 100%; 
 }
 tr{
-    width:376px;
     height: 45px;
     border: 0px;
 }
@@ -53,45 +117,71 @@ table{
     width:100%;
 }
 td{
-    height:45px;
     width:45px;
     padding:0px;
     margin:0px;
 }
-.center {
-  margin: auto;
-  text-align: center;
+.user-turn-sign{
+  color: white;
 }
+.turnflag{
+  position: absolute;
+  top:10px;
+  text-align: center;
+  border: 2px solid black;
+  height:65px;
+  width: 200px;
 
+}
+.game-massage{
+  
+  position:relative;
+  top:30px;
+  margin:0px;
+}
+.side{
+  border: 3px solid black;
+  height: 140px; 
+  width: 240px;
+  margin:10px;
+  position: relative; 
+  border-radius: 10px;
+  display:flex;
+  flex-direction: column ;
+  justify-content: center;
+  align-items: center;
+}
 .red {
-  height: 100%;
-  width: 100%;
+  height: 40px;
+  width: 40px;
   margin: auto;
   background: url("./red.png") no-repeat center ;
-  background-size: cover;
+  /* background-size: cover; */
+    background-size: 100% 100%; 
 }
 .red:active{
   background-color: rgba(171, 3, 9, 0.7);
 }
 .black {
-  height: 100%;
-  width: 100%;
+  height: 40px;
+  width: 40px;
   margin: auto;
-  background: url("./black.png") no-repeat center ;
-  background-size: cover;
+  background: url("./black.png") no-repeat center ; 
+    background-size: 100% 100%; 
 }
 .black:active{
   background-color: rgba(153, 102, 51, 0.7);
 }
 .red.king{
   background: url("./king_red.png") no-repeat center ;
-  background-size: cover;
+    background-size: 100% 100%; 
 }
 .black.king{
   background: url("./black_king.png") no-repeat center ;
-  background-size: cover;
+    background-size: 100% 100%; 
 }
 .loader {
+  display:none;
   border: 16px solid #f3f3f3;
   border-radius: 50%;
   border-top: 16px solid #3498db;

@@ -78,6 +78,7 @@ io.on('connection', (socket) => {
         io.to(room).emit('nextTurn', {board:data.board})
 
     });
+    
     socket.on('disconnect', (reason) =>{
         playerDisconnect(socket, reason);
     });
@@ -88,6 +89,8 @@ async function playerDisconnect(socket, reason){
     game = await Game.find({ $or: [ { joinPlayer: socket.id }, {hostPlayer: socket.id}]}).exec();
     if(typeof(game) !== 'undefined' && game.length > 0){
         disconnectPlayerFromGame(socket.id, game[0]);
+        console.log('player leave gameeeee', game[0].id)
+        io.to('room '+game[0].id).emit('oppoenentDisconnected');
         
         
         // await Game.deleteOne({$or: [ { joinPlayer: socket.handshake.sessionID }, {hostPlayer: socket.handshake.sessionID}]})
@@ -109,14 +112,14 @@ async function disconnectPlayerFromGame(playerID, game){
     }
     console.log('player left game', doc);
 }
-async function searchGame (){
+async function searchGame (res){
     console.log('player search game\n');
     var game = await findMatch(this);
     console.log('player joined game -\n ', game)
     this.join('room ' + game.id);
-    console.log('clinet on room',this.rooms);
-    var role = game.numOfPlayers === 1? 'red' : 'black';
-    this.emit('waitForOpponent', { playerRule : role});
+    console.log('clinet joined room',this.rooms);
+    var role = game.hostPlayer === this.id? 'red' : 'black';
+    res({ role : role});
     if(game.numOfPlayers === 2){
         console.log('start game');
         io.to('room ' + game.id).emit('findOpponent', {gameID : game.id})
